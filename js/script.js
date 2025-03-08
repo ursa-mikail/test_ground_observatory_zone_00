@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!file) return;
 
         if (type === 'html') {
-            iframe.src = `./announcement/${file}.html`;
+            iframe.src = `./${file}.html`;
         } else if (type === 'xml') {
-            fetch(`./announcement/${file}.xml`)
+            fetch(`./${file}.xml`)
                 .then(response => {
                     if (!response.ok) throw new Error("Failed to fetch XML.");
                     return response.text();
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
                     const xsltProcessor = new XSLTProcessor();
 
-                    return fetch('./announcement/transform.xslt')
+                    return fetch('./transform.xslt')
                         .then(response => {
                             if (!response.ok) throw new Error("Failed to fetch XSLT.");
                             return response.text();
