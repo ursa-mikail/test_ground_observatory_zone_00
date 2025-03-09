@@ -1,0 +1,9 @@
+Summary of Content Options:
+
+1. **a01: Page with iframe attack demo**
+   - The page appears to contain interactive tools and resources, such as a demo involving iframe attacks. It includes sections offering summaries and descriptions of its various functionalities, such as tools for generating HTML content or exploring specific demonstrations. For an in-depth understanding of all sections and features, you can explore the site directly here: <a href="https://ursa-mikail.github.io/test_ground_observatory_zone_00/" rel="" target="_blank"><span>Test Ground Observatory Zone 00</span></a>
+
+Summary. **ax_summary: Summary of All Pages**
+   - The ax_summary provides an overarching overview of all the sections (a1 to a4). It synthesizes the key points and functionalities from each part, ensuring that users have a clear understanding of the tools and resources available across the different functionalities.
+
+
