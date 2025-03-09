@@ -17,7 +17,7 @@
         <option value="">-- Choose HTML File --</option>
         <option value="simple/index">Page with iframe attack demo</option>
         <option value="simple_with_checking/index">Page with iframe attack demo</option>
-        <option value="ax_summary">ax_summary</option> 
+        <option value="summary/ax_summary">ax_summary</option> 
 
 </select>
 <button id="load-summary">Load Summary</button>
@@ -32,7 +32,7 @@
     });
 
     function loadSummary() {
-        fetch("./summary_all_pages.txt") // Adjust this if your file structure requires a different path
+        fetch("./summary/summary_all_pages.txt") // Adjust this if your file structure requires a different path
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok: ' + response.statusText);
