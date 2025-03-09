@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const iframe = document.getElementById('content-iframe');
 
     function loadContent(file, type) {
+        const iframe = document.getElementById('content-iframe');
+        if (type === 'html') {
+            iframe.src = file.includes('/') ? file + '.html' : `./${file}.html`;
+        }
+    }
+
+    function loadContent(file, type) {
         if (!file) return;
 
         if (type === 'html') {
