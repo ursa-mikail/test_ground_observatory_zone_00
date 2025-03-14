@@ -17,18 +17,132 @@
             height: 90vh;
             border: 2px solid black;
         }
+        .iframe-container {
+            position: relative;
+            width: 45%;
+        }
+        .integrity-status {
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status-pass {
+            color: green;
+        }
+        .status-fail {
+            color: red;
+        }
     </style>
+    <script>
+        // Known good hashes for our pages
+        const expectedHashes = {
+            'good.html': '347866032cd1f4e66dd1fc2392b9d9e744d3f58b6f6946e33d6d3b5d6cb21d4e',
+            'bad.html': '634b9d7c0dc61cb19ba7d56eacb2b9fe80947f8d1ffce816b36496743134c371'
+        };
+        
+        async function computeSHA256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+        
+        async function verifyIframeIntegrity(iframe, statusElement) {
+            try {
+                // Extract the base URL without query parameters
+                const iframeSrc = iframe.src;
+                const baseUrl = iframeSrc.split('?')[0];
+                const pageName = baseUrl.split('/').pop();
+                
+                // Check if we have a redirect parameter
+                const urlObj = new URL(iframeSrc);
+                const redirectTarget = urlObj.searchParams.get('redirect');
+                
+                if (redirectTarget) {
+                    // Redirect attempt detected - block it
+                    statusElement.textContent = "⚠️ Redirect attempt detected!";
+                    statusElement.className = "integrity-status status-fail";
+                    
+                    // Replace iframe content with warning
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.body.innerHTML = `
+                        <h1 style="color: red;">🚨 Security Warning 🚨</h1>
+                        <p>Redirect attempt detected to: ${redirectTarget}</p>
+                        <p>Navigation blocked for security reasons.</p>
+                    `;
+                    return;
+                }
+                
+                // Fetch the actual content of the page
+                const response = await fetch(baseUrl);
+                const pageContent = await response.text();
+                
+                // Compute hash of the actual content
+                const computedHash = await computeSHA256(pageContent);
+                
+                // Check if the hash matches expected value
+                if (expectedHashes[pageName] && computedHash === expectedHashes[pageName]) {
+                    statusElement.textContent = "✓ Integrity verified";
+                    statusElement.className = "integrity-status status-pass";
+                } else {
+                    statusElement.textContent = "❌ Integrity check failed";
+                    statusElement.className = "integrity-status status-fail";
+                    console.error(`Hash mismatch for ${pageName}: Expected ${expectedHashes[pageName]}, got ${computedHash}`);
+                }
+            } catch (error) {
+                console.error("Error verifying iframe integrity:", error);
+                statusElement.textContent = "❌ Error checking integrity";
+                statusElement.className = "integrity-status status-fail";
+            }
+        }
+        
+        window.onload = function() {
+            // Replace iframes with container + status element + iframe
+            const iframes = document.querySelectorAll('iframe');
+            
+            iframes.forEach((iframe, index) => {
+                const iframeSrc = iframe.src;
+                const title = iframe.title || `Iframe ${index + 1}`;
+                
+                // Create container
+                const container = document.createElement('div');
+                container.className = 'iframe-container';
+                
+                // Create status element
+                const statusElement = document.createElement('div');
+                statusElement.className = 'integrity-status';
+                statusElement.textContent = 'Checking integrity...';
+                
+                // Replace existing iframe with our container
+                const parent = iframe.parentNode;
+                parent.replaceChild(container, iframe);
+                
+                // Add status and recreate iframe in container
+                container.appendChild(statusElement);
+                const newIframe = document.createElement('iframe');
+                newIframe.src = iframeSrc;
+                newIframe.title = title;
+                container.appendChild(newIframe);
+                
+                // Set up integrity check once iframe loads
+                newIframe.onload = function() {
+                    verifyIframeIntegrity(newIframe, statusElement);
+                };
+            });
+        };
+    </script>
 </head>
 <body>
     <iframe src="good.html" title="Good Page"></iframe>
     <iframe src="good.html?redirect=bad.html" title="Redirected Page"></iframe>
 
-
     <br><br>
 
     <!-- Link to the integrity checker page -->
     <a href="check_iframes_integrity.html" target="_blank">Check Iframe Integrity</a>
-
 </body>
 </html>
-
