@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHA256 Hash Computation</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1-crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
     <h1>SHA256 Hash Computation</h1>
+
+    <p>Root URL: <a href="https://ursa-mikail.github.io/test_ground_observatory_zone_00/" target="_blank">https://ursa-mikail.github.io/test_ground_observatory_zone_00/</a></p>
+
     <p>Computing SHA256 hashes for the following URLs:</p>
     <ul>
-        <li><a href="https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/bad.html" target="_blank">Bad HTML</a></li>
-        <li><a href="https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/good.html" target="_blank">Good HTML</a></li>
-        <li><a href="https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/index.html" target="_blank">Index HTML</a></li>
+        <script>
+            const root_url = "https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking";
+            document.write(`<li><a href="${root_url}/bad.html" target="_blank">Bad HTML</a></li>`);
+            document.write(`<li><a href="${root_url}/good.html" target="_blank">Good HTML</a></li>`);
+            document.write(`<li><a href="${root_url}/index.html" target="_blank">Index HTML</a></li>`);
+        </script>
     </ul>
 
     <button onclick="computeSHA256()">Compute Hashes</button>
@@ -35,25 +41,19 @@
 
         async function computeSHA256() {
             const urls = [
-                "https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/bad.html",
-                "https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/good.html",
-                "https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/index.html"
+                `${root_url}/bad.html`,
+                `${root_url}/good.html`,
+                `${root_url}/index.html`
             ];
 
             let resultDiv = document.getElementById('result');
             resultDiv.innerHTML = ''; // Clear previous results
 
             for (let url of urls) {
-                const hash = fetchAndComputeSHA256(url);
-                if (hash) {
-                    const p = document.createElement('p');
-                    p.textContent = `SHA256 for ${url}: ${hash}`;
-                    resultDiv.appendChild(p);
-                } else {
-                    const p = document.createElement('p');
-                    p.textContent = `Failed to fetch or compute hash for ${url}`;
-                    resultDiv.appendChild(p);
-                }
+                const hash = await fetchAndComputeSHA256(url);
+                const p = document.createElement('p');
+                p.textContent = hash ? `SHA256 for ${url}: ${hash}` : `Failed to fetch or compute hash for ${url}`;
+                resultDiv.appendChild(p);
             }
         }
     </script>
