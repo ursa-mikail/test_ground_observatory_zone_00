@@ -87,8 +87,8 @@
     <div>
         <h3>Enter URL to analyze:</h3>
         <input type="text" id="urlInput" class="url-input" 
-            placeholder="Enter URL (e.g., https://ursa-mikail.github.io/site_announcement/announcement/simple_with_checking/index.html)" 
-            value="https://ursa-mikail.github.io/site_announcement/announcement/simple_with_checking/index.html">
+            placeholder="Enter URL (e.g., https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/index.html)" 
+            value="https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking/index.html">
         <button id="analyzeBtn">Analyze Page & iframes</button>
         <button id="loadInFrameBtn">Load in Test Frame</button>
     </div>
@@ -270,12 +270,21 @@
         document.getElementById('loadInFrameBtn').addEventListener('click', loadInTestFrame);
         
         // Predefined URLs
+        const root_url = "https://ursa-mikail.github.io/test_ground_observatory_zone_00/simple_with_checking";
+
+        const urlsToTest = [
+                `${root_url}/bad.html`,
+                `${root_url}/good.html`,
+                `${root_url}/index.html`
+            ];
+
+/*
         const urlsToTest = [
             "https://ursa-mikail.github.io/site_announcement/announcement/simple_with_checking/index.html",
             "https://ursa-mikail.github.io/site_announcement/announcement/simple_with_checking/bad.html",
             "https://ursa-mikail.github.io/site_announcement/announcement/simple_with_checking/good.html"
         ];
-        
+*/        
         // Add buttons for predefined URLs
         const urlButtonsContainer = document.createElement('div');
         urlButtonsContainer.style.marginTop = '10px';
