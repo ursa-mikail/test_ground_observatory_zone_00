@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
                     const xsltProcessor = new XSLTProcessor();
 
-                    return fetch('./transform.xslt')
+                    return fetch('./summary/transform.xslt')
                         .then(response => {
                             if (!response.ok) throw new Error("Failed to fetch XSLT.");
                             return response.text();
