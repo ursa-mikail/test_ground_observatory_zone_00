@@ -7,15 +7,31 @@
     <meta name="expected-hash" content="EXPECTED_SHA256_HASH_HERE">
     <script>
         async function computeSHA256(text) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(text);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-        }
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(text);
+                    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+                }
 
-        async function verifyPageIntegrity() {
+                async function verifyPageIntegrity() {
             const expectedHash = document.querySelector("meta[name='expected-hash']").content;
+            
+            // Check for redirect parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectTarget = urlParams.get('redirect');
+            
+            if (redirectTarget) {
+                console.warn("Redirect attempt detected to:", redirectTarget);
+                // Option 1: Block the redirect and show warning
+                document.body.innerHTML = `<h1>Security Warning</h1>
+                                          <p>Redirect attempt detected to: ${redirectTarget}</p>
+                                          <p>Navigation blocked for security reasons.</p>`;
+                return;
+                
+                // Option 2 (not recommended): Allow redirect but with warning
+                // window.location.href = redirectTarget;
+            }
 
             // Fetch the page content
             const response = await fetch(window.location.href);
@@ -30,9 +46,9 @@
 
             if (computedHash !== expectedHash) {
                 document.body.innerHTML = `<h1>Security Warning</h1>
-                                           <p>Page integrity check failed. Possible tampering detected.</p>
-                                           <p><strong>Expected Hash:</strong> ${expectedHash}</p>
-                                           <p><strong>Computed Hash:</strong> ${computedHash}</p>`;
+                                          <p>Page integrity check failed. Possible tampering detected.</p>
+                                          <p><strong>Expected Hash:</strong> ${expectedHash}</p>
+                                          <p><strong>Computed Hash:</strong> ${computedHash}</p>`;
                 console.error("Hash mismatch! Computed:", computedHash, "Expected:", expectedHash);
             }
         }
